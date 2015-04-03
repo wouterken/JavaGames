@@ -1,0 +1,8 @@
+name="Leonidas"
+description="The king!\nHe looks grumpy..."
+mask = "mask.jpg"
+image = "leonidas.png"
+width = 42
+height = 15
+hasShadows = true
+level = 2

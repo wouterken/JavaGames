@@ -1,0 +1,31 @@
+package properties;
+
+import game.Player;
+
+
+
+
+public class Tax implements Location {
+
+	int amount;
+	String name;
+	
+	public Tax(String _name,int _amount){
+		name = _name;
+		amount = _amount;
+	}
+	
+
+	public String name() {
+		return name;
+	}
+	public String printOption(Player currentPlayer) {
+		return null;
+	}
+	public void autoAction(Player currentPlayer){
+		currentPlayer.deduct(amount);
+		System.out.println(currentPlayer.name()+" paid $"+amount+"  in tax.");
+	}
+
+
+}

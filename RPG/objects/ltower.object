@@ -1,0 +1,7 @@
+name="Man"
+description="Funny looking fellow"
+mask = "mask.jpg"
+image = "leftTower.png"
+width = 361
+height = 400
+hasShadows = false

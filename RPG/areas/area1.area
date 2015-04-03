@@ -1,0 +1,7 @@
+name = "Cool Town"
+initialLevel = "0"
+backgroundImage = "background.jpg"
+areaImage = "figaro.jpg"
+areaMasks = "f-mask-1.jpg,f-mask-2.jpg,f-mask-3.jpg"
+overlays = "f-overlay-1.png,f-overlay-2.png,f-overlay-3.png"
+staticBackground = false

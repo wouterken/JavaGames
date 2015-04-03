@@ -1,0 +1,297 @@
+import game.*;
+
+import gui.Drawable;
+import gui.GameCanvas;
+import gui.GameFrame;
+
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Stack;
+
+import menus.*;
+import positioning.Coordinate;
+import properties.*;
+import properties.Street.Side;
+import specialAreas.*;
+import positioning.*;
+public class Board implements KeyListener  {
+	private Dice dice;
+	private ArrayList<Player> players = new ArrayList<Player>();
+	public HashMap<Player, Integer> playerPositions = new HashMap<Player, Integer>();
+	public Location[] Locations = new Location[40];
+	private Player currentPlayer;
+	private boolean exit;
+	private String info ="";
+	private Stack<Menu> menus;
+	private String actionInfo = "";
+	private Location currentTile = new Go(new Coordinate(11,11));
+	private ArrayList<Drawable> drawables = new ArrayList<Drawable>();
+	public Board(ArrayList<Player> _players) {
+		players = _players;
+		dice = new Dice();
+		menus = new Stack<Menu>();
+		menus.push(new DefaultMenu(currentPlayer, this));
+		
+	}
+	public void setDrawables(){
+		drawables.addAll(players);
+	}
+
+	/**
+	 * Constructs all properties and special areas for the standard monopoly
+	 * board. Adds the Properties to their respective groups. Then places all of
+	 * these on the board.
+	 */
+	public void setUp() {
+		int i = 0;
+		// Set color groups.
+		// Light Brown
+		Street oldKentRoad = new Street("Old Kent Road", 60, 2, Side.SOUTH, new Coordinate(10,11));
+		Street whiteChapelRoad = new Street("WhiteChapel Road", 60, 4,
+				Side.SOUTH, new Coordinate(9,11));
+		oldKentRoad.setColorGroup(whiteChapelRoad, null, "Light Brown");
+		// light blue
+		Street theAngelIslington = new Street("The Angel Islington", 100, 6,
+				Side.SOUTH, new Coordinate(5,11));
+		Street eustonRoad = new Street("Euston Road", 100, 6, Side.SOUTH, new Coordinate(3,11));
+		Street pentonvilleRoad = new Street("Pentonville Road", 120, 8,
+				Side.SOUTH, new Coordinate(2,11));
+		theAngelIslington.setColorGroup(eustonRoad, pentonvilleRoad,
+				"Light Blue");
+		// purple
+		Street pallMall = new Street("Pall Mall", 140, 10, Side.WEST, new Coordinate(1,10));
+		Street whiteHall = new Street("Whitehall", 140, 10, Side.WEST, new Coordinate(1,8));
+		Street northlandAve = new Street("North'land Ave", 160, 12, Side.WEST, new Coordinate(1,7));
+		pallMall.setColorGroup(whiteHall, northlandAve, "Purple");
+		// Dark brown
+		Street bowStreet = new Street("Bow Street", 180, 14, Side.WEST, new Coordinate(1,5));
+		Street marlboroughStreet = new Street("Marlborough Street", 180, 14,
+				Side.WEST, new Coordinate(1,3));
+		Street vineStreet = new Street("Vine Street", 200, 16, Side.WEST, new Coordinate(1,2));
+		bowStreet.setColorGroup(marlboroughStreet, vineStreet, "Dark Brown");
+		// Red
+		Street theStrand = new Street("The Strand", 220, 18, Side.NORTH, new Coordinate(2,1));
+		Street fleetStreet = new Street("Fleet Street", 220, 18, Side.NORTH, new Coordinate(4,1));
+		Street trafalgarSquare = new Street("Trafalgar Square", 240, 20,
+				Side.NORTH,new Coordinate(5,1));
+		theStrand.setColorGroup(fleetStreet, trafalgarSquare, "Red");
+		// yellow
+		Street leciesterSquare = new Street("Leciester Square", 260, 22,
+				Side.NORTH, new Coordinate(7,1));
+		Street conventryStreet = new Street("Conventry Street", 260, 22,
+				Side.NORTH, new Coordinate(8,1));
+		Street piccadilyCircus = new Street("Piccadily Circus", 280, 24,
+				Side.NORTH, new Coordinate(10,1));
+		leciesterSquare.setColorGroup(conventryStreet, piccadilyCircus,
+				"Yellow");
+		// Green
+		Street regentStreet = new Street("Regent Street", 300, 26, Side.SOUTH,new Coordinate(11,2));
+		Street oxfordStreet = new Street("Oxford Street", 300, 26, Side.SOUTH, new Coordinate(11,3));
+		Street bondStreet = new Street("Bond Street", 320, 28, Side.SOUTH, new Coordinate(11,5));
+		regentStreet.setColorGroup(oxfordStreet, bondStreet, "green");
+		// Dark blue
+		Street parkLane = new Street("Park Lane", 350, 35, Side.SOUTH, new Coordinate(11,8));
+		Street mayFair = new Street("Mayfair", 400, 50, Side.SOUTH, new Coordinate(11,10));
+		parkLane.setColorGroup(mayFair, null, "darkBlue");
+
+		// Stations
+		Railway kingscross = new Railway("Kings Cross Station", 200, 25, new Coordinate(6,11));
+		Railway marylebone = new Railway("Marylebone Station", 200, 25, new Coordinate(1,6));
+		Railway fenchurch = new Railway("Fenchurch Station", 200, 25, new Coordinate(6,1));
+		Railway liverpool = new Railway("Liverpool Station", 200, 25, new Coordinate(11,6));
+		kingscross.setNeighbours(marylebone, fenchurch, liverpool);
+		// Utilities
+		Utility electricCompany = new Utility("Electric Company", 150, dice, new Coordinate(1,9));
+		Utility waterWorks = new Utility("Water Works", 150, dice, new Coordinate(9,1));
+		electricCompany.setNeighbour(waterWorks);
+		waterWorks.setNeighbour(electricCompany);
+		// add to board
+		Locations[i++] = new Go(new Coordinate(11,11));
+		Locations[i++] = oldKentRoad;
+		Locations[i++] = new CommunityChest(new Coordinate(9,11));
+		Locations[i++] = whiteChapelRoad;
+		Locations[i++] = new Tax("Income Tax", 200, new Coordinate(7,11));
+		Locations[i++] = kingscross;
+		Locations[i++] = theAngelIslington;
+		Locations[i++] = new Chance(new Coordinate(4,11));
+		Locations[i++] = eustonRoad;
+		Locations[i++] = pentonvilleRoad;
+		Locations[i++] = new Jail(this, new Coordinate(1,11)); // Jail location is at idx 10
+		Locations[i++] = pallMall;
+		Locations[i++] = electricCompany;
+		Locations[i++] = whiteHall;
+		Locations[i++] = northlandAve;
+		Locations[i++] = marylebone;
+		Locations[i++] = bowStreet;
+		Locations[i++] = new CommunityChest(new Coordinate(1,4));
+		Locations[i++] = marlboroughStreet;
+		Locations[i++] = vineStreet;
+		Locations[i++] = new FreeParking(new Coordinate(1,1));
+		Locations[i++] = theStrand;
+		Locations[i++] = new Chance(new Coordinate(1,3));
+		Locations[i++] = fleetStreet;
+		Locations[i++] = trafalgarSquare;
+		Locations[i++] = fenchurch;
+		Locations[i++] = leciesterSquare;
+		Locations[i++] = conventryStreet;
+		Locations[i++] = waterWorks;
+		Locations[i++] = piccadilyCircus;
+		Locations[i++] = new GotoJail(playerPositions, new Coordinate(1,11));
+		Locations[i++] = regentStreet;
+		Locations[i++] = oxfordStreet;
+		Locations[i++] = new CommunityChest(new Coordinate(11,4));
+		Locations[i++] = bondStreet;
+		Locations[i++] = liverpool;
+		Locations[i++] = new Chance(new Coordinate(11,7));
+		Locations[i++] = parkLane;
+		Locations[i++] = new Tax("Super Tax", 200, new Coordinate(11,9));
+		Locations[i++] = mayFair;
+	}
+
+	/**
+	 * The process of a turn for one player. Will move their token(unless in
+	 * jail). Pay any rent/ get any cards automatically and then gives them
+	 * options to buy/sell mortgage/unmortgage and check on their statistics in
+	 * the game.
+	 * 
+	 * @param currentPlayer
+	 */
+	public void turn(Player player) {
+		menus.clear();
+		menus.add(new DefaultMenu(player, this));
+		actionInfo = "";
+		currentPlayer = player;
+
+		String playerName = currentPlayer.name();
+
+		
+		if (!currentPlayer.inJail()) {
+			int roll = dice.rollDice();
+			
+			movePlayer(roll, currentPlayer);
+			currentTile = Locations[playerPositions.get(currentPlayer)];
+			currentPlayer.setCurrentPosition(currentTile);
+
+// 			prints relevant
+//			 information if it
+//			 is a property(e.g
+//			 owner, cost)
+
+			actionInfo = currentTile.autoAction(currentPlayer);
+		} else {
+
+			
+			currentTile = Locations[playerPositions.get(currentPlayer)];
+			currentTile.autoAction(currentPlayer);
+			return;
+		}
+	
+		
+	}
+
+
+
+
+
+	/**
+	 * Moves player on the board, the number of spaces of the current dice roll.
+	 * 
+	 * @param roll
+	 * @param currentPlayer
+	 */
+	private void movePlayer(int roll, Player currentPlayer) {
+		if (!playerPositions.containsKey(currentPlayer)) {// Player isn't on the
+			// board yet!
+			playerPositions.put(currentPlayer, roll);
+		} else {
+			int oldPosition = playerPositions.get(currentPlayer);
+			int newPosition = (oldPosition + roll) % 40; // ensure player stays
+			// within the 40
+			// tiles.
+			if (newPosition < oldPosition) {
+				currentPlayer.add(200);
+
+			}
+			playerPositions.put(currentPlayer, newPosition);
+		}
+
+	}
+	public boolean addMenu(Menu _menu){
+		return menus.add(_menu);
+	}
+	public void menuReturn(){
+		if(menus.size()>1)
+		menus.pop();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		char code = (char)e.getKeyCode();
+		menus.peek().keyPressed(e);
+		if(code == 'P') buyProperty(currentPlayer);
+		if(code == KeyEvent.VK_ESCAPE){menuReturn();}
+	}
+
+
+
+	private void buyProperty(Player currentPlayer) {
+		int pos = playerPositions.get(currentPlayer);
+		Location currentLocation = Locations[pos];
+		if(currentLocation instanceof Property){
+			actionInfo = ((Property) currentLocation).buy(currentPlayer);
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		char code = (char)e.getKeyCode();
+		if(code == KeyEvent.VK_ESCAPE){}
+	
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public Player getCurrentPlayer() {
+		// TODO Auto-generated method stub
+		return currentPlayer;
+	}
+
+
+	public String getCurrentMessage() {
+		return menus.peek().display();
+	}
+
+	public String getInfo() {
+		return currentTile.toString();
+	}
+	public String getActionInfo() {
+		return actionInfo;
+	}
+
+	public void drawItems(Graphics g) {
+		if(drawables == null) return;
+		for(Drawable d: drawables){
+			d.draw(g);
+		}
+		
+	}
+	public ArrayList<Player> getPlayers(){
+		return players;
+	}
+	public void setActionInfo(String s){
+		actionInfo = s;
+	}
+
+
+
+}

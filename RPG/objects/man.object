@@ -1,0 +1,7 @@
+name="Man"
+description="Funny looking fellow"
+mask = "mask.jpg"
+image = "player.png"
+width = 35
+height = 15
+hasShadows = true

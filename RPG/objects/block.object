@@ -1,0 +1,8 @@
+name="Block"
+description="Black Block"
+mask = "mask.jpg"
+image = "block.jpg"
+width = 31
+height = 30
+hasShadows = false
+level = 0

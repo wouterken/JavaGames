@@ -1,0 +1,7 @@
+name="Man"
+description="Funny looking fellow"
+mask = "mask.jpg"
+image = "house1.jpg"
+width = 470
+height = 100
+hasShadows = true

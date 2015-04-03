@@ -1,0 +1,45 @@
+All Values in this file must be on a separate line,
+with exactly one space on either side of the '=' character.
+
+/**ENGINE CONFIGURATION**/
+gameWidth = 896
+gameHeight = 736
+windowWidth = 950
+windowHeight = 800
+
+defaultStepSize = 2
+stepSize = 2
+turboStepSize = 3
+borderSize = 200
+minimalMemoryMode = false
+reflections = true
+shadows = true
+scale = 1
+
+/**MESSAGING CONFIGURATION**/
+messagePaddingX = 100
+messagePaddingY = 100
+lineHeight = 30
+messageSpeed = 17
+
+/**GAME START CONFIGURATION**/
+startingArea = area1
+
+!Player height should be set to equal roughly what the depth (Not Height!) of the player would be in 3 dimensions. Otherwise the
+graphics won't overlap in a nice way.
+
+playerHeight = 17
+playerWidth = 20
+
+/**ANIMATION 			*Higher == slower
+walkAnimationSpeed = 9
+idleTimeOut = 1000
+idleAnimationSpeed = 40
+
+playerImage = "player.png"
+cols = 5
+rows = 3
+playerX = 100
+playerY = 150
+overlayLevel = 0
+
